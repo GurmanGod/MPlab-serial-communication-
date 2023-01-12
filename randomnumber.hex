@@ -1,0 +1,178 @@
+#include"../../common files/device_config.h"
+#include"../../common files/pin_manager.h"
+#include"../../Common files/uart2.h"
+#include"../../Common files/initialize.h"
+#include<stdio.h>
+#include<stdlib.h>
+#include<time.h>
+#include<math.h>
+
+
+void main(void) 
+{
+    
+    SYSTEM_Initialize();
+    UART2_Initialize();
+    
+     
+   
+    uint8_t keystroke;
+     int decimal;
+     int computernum,computernum2,difference;
+     srand(time);
+          uint8_t a,b;
+    
+    
+          computernum=(rand()%9);
+      computernum2=(rand()%100);
+   
+       printf(" \n\r enter a number between 0 to 9 : ");
+       while(1)
+     {
+         
+   
+         if(UART2_is_rx_ready ()==1)
+         {
+           
+         
+         
+ 
+             
+       
+//             keystroke=UART2_Read();
+//             decimal=keystroke-48;
+//             UART2_Write(keystroke);
+             if(UART2_is_tx_ready ()==1)
+             {
+                 a=UART2_Read();
+                   UART2_Write(a);
+                 b=UART2_Read();
+                UART2_Write(b);
+                
+                 if(a>=48 && a<=57 && b>=48 && b<=57)
+                 {
+                 decimal=(10*(a-48))+(b-48);
+                 
+                 printf("\n\r your decimal number is  : %d ",decimal);
+                  while(1)
+                {
+                     
+               
+                   printf("\n\r computer number: %d ",computernum2);
+                    difference=abs(decimal-computernum2);
+                  
+                    if(difference>0 && difference<=30  )
+                    {
+                     printf("\n\r very close please enter the number again ");
+                   
+                     a=UART2_Read();
+                         UART2_Write(a);
+                         b=UART2_Read();
+                          UART2_Write(b);
+                      decimal=(10*(a-48))+(b-48);
+                     continue;
+                    } 
+                     else if(difference>=31 && difference<=61)
+                       {
+                        printf("\n\r hard luck try again ");
+                          a=UART2_Read();
+                         UART2_Write(a);
+                         b=UART2_Read();
+                          UART2_Write(b);
+                      decimal=(10*(a-48))+(b-48);
+                       
+                         continue;
+                       }
+                     else if(difference>=62 && difference<=99 )
+                     {
+                         printf("\n\r not even close  try again");
+                         a=UART2_Read();
+                         UART2_Write(a);
+                         b=UART2_Read();
+                          UART2_Write(b);
+                          decimal=(10*(a-48))+(b-48);
+                        
+                         continue;
+            
+                       }
+                     else if(difference==0)
+                    {
+                        printf(" \n\r you won ");
+                        break;
+                    }
+                
+                }                
+                 }
+                 
+                 else if ( b==13 && a>=48 && a<=57)
+                 {
+                     decimal=a-48;
+                     printf("\n\r your one digit number is : %d",decimal);
+                      while(1)
+                {
+               
+                     while(decimal<0 || decimal >9)
+                      {
+                         printf("invalid input please enter again");
+                          printf(" \n\r");
+                          keystroke=UART2_Read();
+                          decimal=keystroke-48;
+                           UART2_Write(keystroke);
+            
+                      }
+                   
+                    difference=abs(decimal-computernum);
+                  
+                    if(difference>0 && difference<=3  )
+                    {
+                     printf("\n\r very close please enter the number again ");
+                   
+                   keystroke=UART2_Read();
+                     decimal=keystroke-48;
+                     UART2_Write(keystroke);
+                     continue;
+                    } 
+                     else if(difference>=4 && difference<=7)
+                       {
+                        printf("\n\r hard luck try again ");
+                        keystroke=UART2_Read();
+                        decimal=keystroke-48;
+                         UART2_Write(keystroke);
+                         continue;
+                       }
+                     else if(difference>=8 && difference<=9 )
+                     {
+                         printf("\n\r not even close  try again");
+                         keystroke=UART2_Read();
+                         decimal=keystroke-48;
+                          UART2_Write(keystroke);
+                         continue;
+            
+                       }
+                     else if(difference==0)
+                    {
+                        printf(" \n\r you won ");
+                        break;
+                    }
+                
+                }                
+                 }
+                 else
+                 {
+                     printf(" \n\r the input id wrong please run the program again");
+                 }
+               
+               
+             }
+              
+             }
+         }
+             
+     
+     
+    
+     }
+
+  
+
+
