@@ -1,0 +1,55 @@
+/***
+    APSC 1299
+    Lab 2 - Grove LCD
+    Student file - main.c source code
+    Dec 15, 2021
+***/
+
+
+#include "initialize2.h"
+#include "pin_manager2.h"
+#include "../Common files/device_config.h"
+#include "../Common files/i2c1_master.h"
+#include "../Common files/uart2.h"
+
+
+void clearScreen();
+void initializeScreen();
+void newRowColumn(int,int);
+
+
+void initializeScreen()
+{
+    SYSTEM_Initialize();
+       UART2_Initialize();
+       I2C1_Initialize();
+  i2c1_address_t LCD_address= 0x3E; 
+    __delay_ms(15);
+ I2C1_Write1ByteRegister(LCD_address, 0x80,0b00111000);
+  __delay_ms(39);
+  I2C1_Write1ByteRegister(LCD_address, 0x80,0b00001111);
+          __delay_ms(39);
+   I2C1_Write1ByteRegister(LCD_address, 0x80,0b00000001);
+            __delay_ms(39);
+    I2C1_Write1ByteRegister(LCD_address, 0x80,	0b00000010);
+}
+
+void clearScreen()
+{
+//clear screen
+           I2C1_Initialize();
+    i2c1_address_t LCD_address= 0x3E; 
+   
+       __delay_ms(1.53);
+            I2C1_Write1ByteRegister(LCD_address, 0x80, 0x01);// clear screen 
+      
+          
+}
+void newRowColumn(int,int)
+
+void main(void)
+{
+ initializeScreen();
+   clearScreen();
+         
+}
