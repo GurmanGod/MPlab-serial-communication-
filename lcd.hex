@@ -1,0 +1,144 @@
+/***
+    APSC 1299
+    Lab 2 - Grove LCD
+    Student file - main.c source code
+    Dec 15, 2021
+***/
+
+
+#include "initialize2.h"
+#include "pin_manager2.h"
+#include "../Common files/device_config.h"
+#include "../Common files/i2c1_master.h"
+#include "../Common files/uart2.h"
+#include<stdio.h>
+#include<string.h>
+
+
+
+
+void main(void)
+{
+ 
+//initialize the device
+         SYSTEM_Initialize();
+       UART2_Initialize();
+       I2C1_Initialize();
+    
+    
+    
+        
+   int  rem=0,i=0;
+  uint8_t num5;
+  int num,c=3;
+   char hex[6]={'a','b','c','d','e','f'};
+   char s[4]={};
+
+  i2c1_address_t LCD_address= 0x3E; 
+                printf("\n\r enter a keystroke : ");
+         num=UART2_Read();
+         UART2_Write(num);
+         num5=num;
+         
+          while(num>0)
+    {     
+     rem=num%16;
+        if(rem<10)
+        {
+          s[i]=rem;
+           
+        }
+       else{
+           s[i]=hex[rem-10];
+           
+       }
+        num/=16;
+       i++;
+    }
+    char n[10]={};
+    int l=0;
+    for(int j=i-1;j>=0;j--)
+    {//rotate array 
+        n[l]=s[j];
+        l++;
+   }   
+    printf("\n\r your hex decimal value is :0x");
+    for(int k=0;k<l;k++)
+    {
+       
+       
+      if(n[k]<10)
+        {
+           printf("%d",n[k]);
+        }
+        else
+       {
+            
+            printf("%c",n[k]);
+       }
+    }
+   
+  
+         
+  
+    
+      
+__delay_ms(15);
+ I2C1_Write1ByteRegister(LCD_address, 0x80,0b00111000  );
+  __delay_ms(39);
+  I2C1_Write1ByteRegister(LCD_address, 0x80,0b00001111  );
+          __delay_ms(39);
+   I2C1_Write1ByteRegister(LCD_address, 0x80,0b00000001);
+            __delay_ms(39);
+    I2C1_Write1ByteRegister(LCD_address, 0x80,	0b00000010);
+
+   unsigned char messageT[] = "@HEX: SYMBOL: ";
+   unsigned char messageB[] = "@    ";
+  messageB[1]='0';
+   messageB[2]='x';
+   
+   for(int i =0;i<strlen(n);i++)
+   {
+      if(n[i]>=0&& n[i]<=9)
+       {
+           messageB[c]=n[i]+48;// explicit conversion ASCII TO CHAR
+       printf("\n\r%d",n[i]);
+       }
+      else
+       {
+           messageB[c]=n[i];
+           printf("\n\r%c",n[i]);
+      }
+       c++;
+       
+   }
+ 
+
+
+   
+   //Initialize the LCD - enter code here
+     
+    I2C1_Write1ByteRegister(LCD_address, 0x80, 0x80); // set to row 0 col 0
+    _delay(500);
+    I2C1_WriteNBytes(LCD_address, messageT,strlen(messageT));
+    I2C1_Write1ByteRegister(LCD_address, 0x80, 0xC7); // set to row 1 col 0
+    _delay(500);
+    I2C1_WriteNBytes(LCD_address, messageB,strlen(messageB));
+    
+    // initialize the lcd for new message
+    I2C1_Write1ByteRegister(LCD_address, 0x80, 0x0E);//blinker off 
+     _delay(39);
+    I2C1_Write1ByteRegister(LCD_address,0x80,0XC0);// set to row 1 col 0
+            _delay(39);
+        unsigned char messageM[] = "@";
+        
+        messageM[1]=num5;
+        
+     I2C1_WriteNBytes(LCD_address, messageM ,strlen(messageM)-1);
+            
+    
+     while(1)
+     {
+         
+     }
+     }
