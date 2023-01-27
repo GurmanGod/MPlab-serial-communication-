@@ -1,0 +1,92 @@
+/***
+    APSC 1299
+    Lab 3 - DIO
+    Student file - main.c source code
+
+    Date:  20-DEC-2020
+***/
+
+
+#include <xc.h>
+#include "initialize_Lab3.h"
+#include "pin_manager_Lab3.h"
+#include <string.h>
+#include"../Common files/i2c1_master.h"
+#include<stdio.h>
+#include"../Common files/uart2.h"
+void main(void) 
+{
+    
+    // Initialize the device
+    SYSTEM_Initialize();
+      I2C1_Initialize();
+       UART2_Initialize();
+  i2c1_address_t LCD_address= 0x3E; 
+    __delay_ms(15);
+ I2C1_Write1ByteRegister(LCD_address, 0x80,0b00111000); // prints in row 0 coloumn 0
+  __delay_ms(39);
+  I2C1_Write1ByteRegister(LCD_address, 0x80,0b00001111);
+          __delay_ms(39);
+   I2C1_Write1ByteRegister(LCD_address, 0x80,0b00000001);
+            __delay_ms(39);
+    I2C1_Write1ByteRegister(LCD_address, 0x80,	0b00000010);
+    TRISDbits.TRISD2 = OUTPUT;  // The pin_manager has RD2 initialized to be 1 - INPUT
+                              // Note, "OUTPUT" has been defined in pin_manager_Lab3.h
+    TRISD2=0;
+    TRISD1=1;
+    while (1)
+    {
+         unsigned char message[]="@ BOTTON#1 - ON";
+         unsigned char messageA[]="@ BOTTON#1 - OFF";
+ 
+   
+   
+        // Start code for Part B - instructions 3 & 4
+//        RD2=1;
+//        __delay_ms(100);
+//        RD2=0;
+//         __delay_ms(100);
+        PORTDbits.RD2 = HIGH;   // Turn on RD2 - note, "HIGH" has been defined in
+                                // pin_manager_Lab3.h
+//        PORTDbits.RD1 = HIGH;   // To investigate what happens writing to an input pin
+        
+        _delay(10000);          // Set delay for LED to blink at a rate of 10 Hz
+
+        PORTDbits.RD2 = LOW;    // Turn off RD2 - note, "LOW" has been defined in
+                                // pin_manager_Lab3.h
+//        PORTDbits.RD1 = LOW;    // To investigate what happens writing to an input pin
+        
+        _delay(20000);          // Set delay for LED to blink at a rate of 10 Hz
+        //  End code for Part B - instructions 3 & 4
+        
+        
+        //  Add code for Part B - instruction 5, and Part C
+//       RD2= RD1==1? 0:1;
+        if(RD1==1)
+        {
+             I2C1_WriteNBytes( LCD_address,message,strlen(message) );  
+            RD2=0;
+      
+          __delay_ms(2000);
+         
+
+   
+        }
+        else
+        {
+               I2C1_WriteNBytes( LCD_address,messageA,strlen(messageA) );  
+        
+            RD2=1;
+       __delay_ms(2000);
+     
+        }
+      
+    
+    
+   
+    }
+}
+//
+/**
+ End of File
+*/
